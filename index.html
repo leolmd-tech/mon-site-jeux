@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MiniCraft 3D</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Chargement de Three.js via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+</head>
+<body>
+    <!-- Conteneur pour le rendu Three.js -->
+    <div id="canvas-container"></div>
+
+    <!-- Viseur central -->
+    <div id="crosshair"></div>
+
+    <!-- Contrôles tactiles pour mobile -->
+    <div id="mobile-controls">
+        <div id="joystick-zone">
+            <div id="joystick-base">
+                <div id="joystick-stick"></div>
+            </div>
+        </div>
+        <div id="touch-look-zone"></div>
+        <div id="mobile-buttons">
+            <button id="btn-break" class="mobile-btn btn-action-break">Casser</button>
+            <button id="btn-place" class="mobile-btn btn-action-place">Poser</button>
+            <button id="btn-jump" class="mobile-btn btn-action-jump">Sauter</button>
+        </div>
+    </div>
+
+    <!-- Barre de raccourcis (Hotbar) -->
+    <div id="hotbar-container">
+        <div id="hotbar">
+            <div class="hotbar-slot active" data-slot="0" data-block="1">
+                <span class="slot-num">1</span>
+                <div class="block-preview grass"></div>
+                <span class="block-name">Herbe</span>
+            </div>
+            <div class="hotbar-slot" data-slot="1" data-block="2">
+                <span class="slot-num">2</span>
+                <div class="block-preview dirt"></div>
+                <span class="block-name">Terre</span>
+            </div>
+            <div class="hotbar-slot" data-slot="2" data-block="3">
+                <span class="slot-num">3</span>
+                <div class="block-preview stone"></div>
+                <span class="block-name">Pierre</span>
+            </div>
+            <div class="hotbar-slot" data-slot="3" data-block="4">
+                <span class="slot-num">4</span>
+                <div class="block-preview wood"></div>
+                <span class="block-name">Bois</span>
+            </div>
+            <div class="hotbar-slot" data-slot="4" data-block="5">
+                <span class="slot-num">5</span>
+                <div class="block-preview leaves"></div>
+                <span class="block-name">Feuilles</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu d'accueil / Pause -->
+    <div id="menu-overlay" class="overlay">
+        <div class="menu-card">
+            <h1>MiniCraft 3D</h1>
+            <p class="menu-subtitle">Jeu Voxel 3D dans le navigateur</p>
+            <div class="menu-buttons">
+                <button id="btn-play" class="btn btn-primary">Jouer</button>
+                <button id="btn-new-world" class="btn btn-secondary">Nouveau monde</button>
+            </div>
+            <div class="menu-instructions">
+                <div class="instruction-column">
+                    <h3>🖥️ Ordinateur</h3>
+                    <ul>
+                        <li><b>Déplacement :</b> ZQSD / WASD / Flèches</li>
+                        <li><b>Regarder :</b> Souris (Pointer Lock)</li>
+                        <li><b>Sauter :</b> Espace</li>
+                        <li><b>Casser :</b> Clic gauche</li>
+                        <li><b>Poser :</b> Clic droit</li>
+                        <li><b>Sélection :</b> Touches 1 à 5 ou clic hotbar</li>
+                    </ul>
+                </div>
+                <div class="instruction-column">
+                    <h3>📱 Mobile</h3>
+                    <ul>
+                        <li><b>Joystick gauche :</b> Déplacements</li>
+                        <li><b>Glisser à droite :</b> Orienter la vue</li>
+                        <li><b>Boutons bas :</b> Casser, Poser, Sauter</li>
+                        <li><b>Hotbar :</b> Tap pour sélectionner le bloc</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts du jeu -->
+    <script src="monde.js"></script>
+    <script src="joueur.js"></script>
+    <script src="controles.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

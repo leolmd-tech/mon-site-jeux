@@ -1,0 +1,402 @@
+/* Reset et variables de style sombre */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+
+:root {
+    --bg-dark: #121216;
+    --card-bg: rgba(22, 24, 34, 0.92);
+    --primary-color: #4caf50;
+    --primary-hover: #45a049;
+    --secondary-color: #2196f3;
+    --secondary-hover: #1e88e5;
+    --text-color: #f0f0f0;
+    --text-dim: #a0a0b0;
+    --border-color: rgba(255, 255, 255, 0.15);
+    --slot-bg: rgba(0, 0, 0, 0.5);
+    --slot-active-border: #50c878;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--bg-dark);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text-color);
+    touch-action: none;
+}
+
+/* Conteneur 3D Canvas */
+#canvas-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+#canvas-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+}
+
+/* Viseur central */
+#crosshair {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    pointer-events: none;
+}
+
+#crosshair::before, #crosshair::after {
+    content: '';
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+}
+
+#crosshair::before {
+    top: 5px;
+    left: 0;
+    width: 12px;
+    height: 2px;
+}
+
+#crosshair::after {
+    top: 0;
+    left: 5px;
+    width: 2px;
+    height: 12px;
+}
+
+/* Hotbar (barre d'outils bas) */
+#hotbar-container {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+
+#hotbar {
+    display: flex;
+    gap: 8px;
+    background: rgba(18, 18, 22, 0.75);
+    padding: 6px;
+    border-radius: 12px;
+    border: 2px solid var(--border-color);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.hotbar-slot {
+    width: 60px;
+    height: 60px;
+    background: var(--slot-bg);
+    border: 2px solid transparent;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.hotbar-slot:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.hotbar-slot.active {
+    border-color: var(--slot-active-border);
+    background: rgba(80, 200, 120, 0.15);
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(80, 200, 120, 0.3);
+}
+
+.slot-num {
+    position: absolute;
+    top: 3px;
+    left: 5px;
+    font-size: 11px;
+    font-weight: bold;
+    color: var(--text-dim);
+}
+
+.block-preview {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    margin-top: 4px;
+    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.block-preview.grass { background: linear-gradient(135deg, #55aa55 0%, #3b7a3b 100%); }
+.block-preview.dirt { background: linear-gradient(135deg, #8b5a2b 0%, #5c3a1e 100%); }
+.block-preview.stone { background: linear-gradient(135deg, #888888 0%, #555555 100%); }
+.block-preview.wood { background: linear-gradient(135deg, #a0522d 0%, #663300 100%); }
+.block-preview.leaves { background: linear-gradient(135deg, #2e8b57 0%, #1c5233 100%); }
+
+.block-name {
+    font-size: 10px;
+    margin-top: 2px;
+    color: var(--text-color);
+    white-space: nowrap;
+}
+
+/* Contrôles tactiles mobiles */
+#mobile-controls {
+    display: none; /* Affiché uniquement sur tactile / petits écrans */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 15;
+    pointer-events: none;
+}
+
+/* Sur écran tactile ou mobile */
+@media (max-pointer: coarse), (max-width: 900px) {
+    #mobile-controls {
+        display: block;
+    }
+}
+
+#joystick-zone {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    width: 120px;
+    height: 120px;
+    pointer-events: auto;
+}
+
+#joystick-base {
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.12);
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    position: relative;
+    backdrop-filter: blur(4px);
+}
+
+#joystick-stick {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+#touch-look-zone {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 60%;
+    height: 75%;
+    pointer-events: auto;
+}
+
+#mobile-buttons {
+    position: absolute;
+    bottom: 100px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: auto;
+}
+
+.mobile-btn {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+    color: #fff;
+    font-weight: bold;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    backdrop-filter: blur(4px);
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.btn-action-break {
+    background: rgba(219, 68, 85, 0.75);
+}
+
+.btn-action-place {
+    background: rgba(52, 168, 83, 0.75);
+}
+
+.btn-action-jump {
+    background: rgba(66, 133, 244, 0.75);
+}
+
+.mobile-btn:active {
+    transform: scale(0.92);
+    filter: brightness(1.2);
+}
+
+/* Menu Overlay */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 10, 15, 0.85);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    transition: opacity 0.3s ease;
+}
+
+.overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.menu-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 32px;
+    width: 100%;
+    max-width: 540px;
+    text-align: center;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+}
+
+.menu-card h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #72c05b 0%, #2196f3 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+}
+
+.menu-subtitle {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    margin-bottom: 24px;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+.btn {
+    padding: 14px 24px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(76, 175, 80, 0.4);
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: var(--secondary-color);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(33, 150, 243, 0.4);
+}
+
+.btn-secondary:hover {
+    background: var(--secondary-hover);
+    transform: translateY(-2px);
+}
+
+.menu-instructions {
+    display: flex;
+    gap: 20px;
+    text-align: left;
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px;
+}
+
+.instruction-column {
+    flex: 1;
+}
+
+.instruction-column h3 {
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+    color: #e0e0e0;
+}
+
+.instruction-column ul {
+    list-style: none;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+}
+
+.instruction-column li b {
+    color: #d0d0d0;
+}
+
+@media (max-width: 600px) {
+    .menu-card {
+        padding: 20px;
+    }
+    .menu-card h1 {
+        font-size: 2rem;
+    }
+    .menu-instructions {
+        flex-direction: column;
+        gap: 12px;
+    }
+    .hotbar-slot {
+        width: 48px;
+        height: 48px;
+    }
+    .block-preview {
+        width: 20px;
+        height: 20px;
+    }
+    .block-name {
+        font-size: 8px;
+    }
+}
